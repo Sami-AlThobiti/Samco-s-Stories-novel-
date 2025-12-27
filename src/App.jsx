@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   BookOpen, Mic, Send, Play, Pause, Settings, Home, Sparkles, 
   Coffee, User, Sun, Moon, Palette, CheckCircle, Calendar, 
-  Cloud, Volume2, Award, Heart, Layout, Search, Plus, ArrowLeft, Star
+  Cloud, Volume2, Award, Heart, Layout, Search, Plus, ArrowLeft, Star,
+  Mic2, ChevronDown, Globe, AlertTriangle
 } from 'lucide-react';
 
 // --- Configuration & Constants ---
@@ -11,10 +12,130 @@ const THEMES = {
   default: { id: 'default', name: 'راوي', bg: 'bg-gray-50', primary: 'bg-indigo-600', primaryLight: 'bg-indigo-50', text: 'text-gray-900', accent: 'text-indigo-600', card: 'bg-white', font: 'font-sans' },
   dark: { id: 'dark', name: 'ليلي', bg: 'bg-slate-900', primary: 'bg-blue-600', primaryLight: 'bg-slate-800', text: 'text-white', accent: 'text-blue-400', card: 'bg-slate-800', font: 'font-sans' },
   coffee: { id: 'coffee', name: 'قهوة', bg: 'bg-[#F5E6D3]', primary: 'bg-[#6F4E37]', primaryLight: 'bg-[#E6CCB2]', text: 'text-[#3E2723]', accent: 'text-[#6F4E37]', card: 'bg-[#FFF8F0]', font: 'font-serif' },
-  kids: { id: 'kids', name: 'أطفال', bg: 'bg-yellow-50', primary: 'bg-pink-500', primaryLight: 'bg-yellow-200', text: 'text-purple-900', accent: 'text-pink-500', card: 'bg-white border-2 border-dashed border-pink-300', font: 'font-sans rounded-3xl' }
+  kids: { id: 'kids', name: 'أطفال', bg: 'bg-yellow-50', primary: 'bg-pink-500', primaryLight: 'bg-yellow-200', text: 'text-purple-900', accent: 'text-pink-500', card: 'bg-white border-2 border-dashed border-pink-300', font: 'font-sans rounded-3xl' },
+  nature: { id: 'nature', name: 'طبيعة', bg: 'bg-emerald-50', primary: 'bg-emerald-600', primaryLight: 'bg-emerald-100', text: 'text-emerald-950', accent: 'text-emerald-600', card: 'bg-white border border-emerald-100 shadow-emerald-100', font: 'font-sans' },
+  galaxy: { id: 'galaxy', name: 'مجرة', bg: 'bg-[#0B0F19]', primary: 'bg-purple-600', primaryLight: 'bg-[#1E1B4B]', text: 'text-purple-50', accent: 'text-purple-400', card: 'bg-[#151932] border border-purple-500/20 backdrop-blur-md', font: 'font-sans tracking-wide' },
+  sunset: { id: 'sunset', name: 'غروب', bg: 'bg-orange-50', primary: 'bg-orange-500', primaryLight: 'bg-orange-100', text: 'text-orange-950', accent: 'text-orange-600', card: 'bg-white border-b-4 border-orange-200', font: 'font-serif' }
 };
 
-// --- Data Generation (20 Stories) ---
+// --- Story Engine Logic (New & Advanced) ---
+
+const STORY_TEMPLATES = {
+  space: {
+    keywords: ['فضاء', 'قمر', 'كوكب', 'صاروخ', 'نجم', 'شمس', 'مريخ', 'فضائي'],
+    genre: 'sci_fi',
+    intros: [
+      "في محطة الفضاء الدولية، كان الجميع يستعدون لمهمة خاصة.",
+      "نظر البطل إلى السماء المليئة بالنجوم وتساءل عما يوجد هناك."
+    ],
+    plots: [
+      { speaker: "الراوي", text: "انطلق الصاروخ بسرعة هائلة مخترقاً الغلاف الجوي." },
+      { speaker: "البطل", text: "انظروا! الأرض تبدو صغيرة جداً من هنا." },
+      { speaker: "الراوي", text: "فجأة، ظهر ضوء غريب يلمع من بعيد." },
+      { speaker: "مساعد", text: "أيها القائد، أجهزة الاستشعار تلتقط إشارة مجهولة!" },
+      { speaker: "البطل", text: "لا تخافوا، دعونا نقترب بحذر لنكتشف ما هذا." },
+      { speaker: "الراوي", text: "اقتربت المركبة من كويكب يلمع بألوان قوس قزح." },
+      { speaker: "البطل", text: "إنه ليس مجرد كويكب، إنه مصنوع من الكريستال النادر!" },
+      { speaker: "الراوي", text: "قام الفريق بجمع عينة صغيرة ليعودوا بها إلى الأرض." },
+      { speaker: "البطل", text: "هذا الاكتشاف سيغير تاريخ العلم للأبد." },
+      { speaker: "الراوي", text: "عادت المركبة بسلام، واحتفل العالم بالأبطال الشجعان." }
+    ]
+  },
+  nature: {
+    keywords: ['غابة', 'أسد', 'فيل', 'نمر', 'شجرة', 'نهر', 'عصفور', 'حيوان', 'قطة', 'كلب', 'بحر', 'سمكة'],
+    genre: 'adventure',
+    intros: [
+      "في قلب الغابة الخضراء، حيث الأشجار تعانق السماء.",
+      "كان يوماً مشمساً في الحديقة الواسعة المليئة بالزهور."
+    ],
+    plots: [
+      { speaker: "الراوي", text: "كان الهدوء يعم المكان، حتى سُمع صوت غريب بين الشجيرات." },
+      { speaker: "البطل", text: "هل تسمعون هذا؟ يبدو وكأنه شخص يطلب المساعدة." },
+      { speaker: "الراوي", text: "بحث البطل خلف الأشجار فوجد صغيراً قد تاه عن منزله." },
+      { speaker: "البطل", text: "يا مسكين، لا تقلق، سأساعدك في العثور على عائلتك." },
+      { speaker: "الراوي", text: "سار الاثنان معاً متجاوزين النهر المتدفق." },
+      { speaker: "صديق", text: "احذر! الصخور هنا زلقة جداً." },
+      { speaker: "البطل", text: "أمسك يدي جيداً، لن ندع أي شيء يوقفنا." },
+      { speaker: "الراوي", text: "بعد مسيرة طويلة، ظهرت علامات الفرح على وجه الصغير." },
+      { speaker: "البطل", text: "ها هي عائلتك هناك! لقد نجحنا." },
+      { speaker: "الراوي", text: "شكرت العائلة البطل، وعاد إلى بيته وهو يشعر بالفخر." }
+    ]
+  },
+  fantasy: {
+    keywords: ['سحر', 'مارد', 'كنز', 'أميرة', 'تنين', 'قلعة', 'جني', 'خاتم'],
+    genre: 'fantasy',
+    intros: [
+      "في مملكة بعيدة تحكمها الأساطير والسحر.",
+      "عثر البطل على كتاب قديم في مكتبة جده المغبرة."
+    ],
+    plots: [
+      { speaker: "الراوي", text: "عندما فتح الكتاب، خرج منه دخان ملون وشكل غريب." },
+      { speaker: "البطل", text: "من أنت؟ وكيف خرجت من هذا الكتاب؟" },
+      { speaker: "الجني", text: "أنا حارس الحكايات، وقد تم حبسي هنا منذ زمن طويل." },
+      { speaker: "الراوي", text: "أخبر الجني البطل عن كنز مخفي يحميه تنين نائم." },
+      { speaker: "البطل", text: "يجب أن نجد هذا الكنز لنساعد أهل القرية." },
+      { speaker: "الراوي", text: "انطلقا في رحلة عبر الجبال الضبابية." },
+      { speaker: "الجني", text: "استخدم هذا المفتاح السحري لفتح بوابة القلعة." },
+      { speaker: "الراوي", text: "دخل البطل القلعة بهدوء لكي لا يوقظ التنين." },
+      { speaker: "البطل", text: "وجدته! إنه صندوق الذهب والجواهر." },
+      { speaker: "الراوي", text: "تسللوا للخارج بنجاح، وعم الرخاء القرية بفضل شجاعة البطل." }
+    ]
+  },
+  general: {
+    keywords: [], // Fallback
+    genre: 'values',
+    intros: [
+      "في مدينة هادئة، كان هناك طفل يحب الاستكشاف والمغامرة.",
+      "بدأت القصة عندما قرر الأصدقاء الذهاب في رحلة تخييم."
+    ],
+    plots: [
+      { speaker: "الراوي", text: "بينما هم يسيرون، وجدوا شيئاً غريباً ملقى على الأرض." },
+      { speaker: "البطل", text: "ما هذا الشيء؟ يبدو قديماً وقيماً." },
+      { speaker: "الراوي", text: "قرر الأصدقاء البحث عن صاحب هذا الغرض المفقود." },
+      { speaker: "صديق", text: "ربما يجب أن نسأل الشرطي في وسط المدينة." },
+      { speaker: "البطل", text: "فكرة جيدة، الأمانة هي أهم شيء." },
+      { speaker: "الراوي", text: "بحثوا طويلاً وسألوا الكثير من الناس." },
+      { speaker: "عجوز", text: "يا إلهي! هذا قلادتي التي أبحث عنها منذ سنين." },
+      { speaker: "البطل", text: "تفضلي يا سيدتي، نحن سعداء لأننا وجدناها." },
+      { speaker: "الراوي", text: "شكرتهم السيدة وقدمت لهم كعكاً لذيذاً مكافأة لهم." },
+      { speaker: "البطل", text: "السعادة الحقيقية هي في مساعدة الآخرين." }
+    ]
+  }
+};
+
+// Function to construct a story
+const generateStoryLogic = (prompt) => {
+  const p = prompt.toLowerCase();
+  
+  // 1. Determine Category
+  let category = 'general';
+  for (const [key, data] of Object.entries(STORY_TEMPLATES)) {
+    if (data.keywords.some(k => p.includes(k))) {
+      category = key;
+      break;
+    }
+  }
+  
+  const template = STORY_TEMPLATES[category];
+  
+  // 2. Select Random Intro
+  const intro = template.intros[Math.floor(Math.random() * template.intros.length)];
+  
+  // 3. Construct Scenes (Injecting the prompt topic)
+  const scenes = [
+    { speaker: "الراوي", text: intro },
+    { speaker: "الراوي", text: `كان موضوع اليوم يدور حول ${prompt}، وهو أمر مثير جداً.` },
+    ...template.plots
+  ];
+
+  return {
+    id: Date.now(),
+    title: `مغامرة: ${prompt}`,
+    genre: template.genre,
+    brief: `قصة تفاعلية ممتعة تم تأليفها خصيصاً عن "${prompt}".`,
+    scenes: scenes
+  };
+};
 
 const GENRES = {
   adventure: { label: 'مغامرة', color: 'bg-orange-100 text-orange-600' },
@@ -23,7 +144,6 @@ const GENRES = {
   sci_fi: { label: 'فضاء', color: 'bg-blue-100 text-blue-600' },
 };
 
-// 1. Five detailed base stories
 const BASE_STORIES = [
   { id: 1, title: "عمر وبوابة المدرسة", genre: 'values', brief: "قصة عن الشجاعة في اليوم الأول.", scenes: [{ speaker: "الراوي", text: "وقف عمر أمام المدرسة." }, { speaker: "عمر", text: "هل سأجد أصدقاء؟", emotion: "nervous" }, { speaker: "المعلمة", text: "أهلاً بك يا بطل!", emotion: "warm" }] },
   { id: 2, title: "السلحفاة الطائرة", genre: 'fantasy', brief: "حلم سلحفاة صغيرة بالطيران.", scenes: [{ speaker: "الراوي", text: "كانت سوسو تحلم بلمس الغيوم." }, { speaker: "سوسو", text: "لو كان لي جناحان!" }] },
@@ -32,7 +152,6 @@ const BASE_STORIES = [
   { id: 5, title: "القطة التي أضاعت مواءها", genre: 'fantasy', brief: "بحث مضحك عن الصوت المفقود.", scenes: [{ speaker: "القطة", text: "هوو هوو.. مهلاً، هذا صوت بومة!" }] },
 ];
 
-// 2. Generate 15 more stories programmatically to reach 20
 const STORY_LIBRARY = [...BASE_STORIES];
 const ADDITIONAL_TITLES = [
   "النملة والمارد الأزرق", "سر الحديقة الخلفية", "الفتى الذي صادق الغيوم", "سباق السيارات العجيبة", 
@@ -65,38 +184,86 @@ const MOCK_TASKS = [
 
 const useTTS = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voices, setVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
   const synth = window.speechSynthesis;
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const allVoices = synth.getVoices();
+      
+      // Strict Filter: Only allow voices that explicitly support Arabic
+      const validArabicVoices = allVoices.filter(v => 
+        v.lang.toLowerCase().startsWith('ar') || 
+        v.name.toLowerCase().includes('arabic') || 
+        v.name.includes('العربية')
+      );
+
+      setVoices(validArabicVoices);
+      
+      // Smart Auto-select
+      if (!selectedVoice && validArabicVoices.length > 0) {
+        const preferred = validArabicVoices.find(v => 
+          v.name.includes('Google') || 
+          v.name.includes('Microsoft') || 
+          v.name.includes('Maged') 
+        ) || validArabicVoices[0];
+        setSelectedVoice(preferred);
+      }
+    };
+
+    loadVoices();
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = loadVoices;
+    }
+  }, []);
 
   const speak = (text, onEnd) => {
     if (synth.speaking) synth.cancel();
+    
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ar-SA'; 
+    utterance.lang = 'ar-SA';
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+    }
     utterance.rate = 0.9;
     utterance.onend = () => { setIsSpeaking(false); if (onEnd) onEnd(); };
     utterance.onstart = () => setIsSpeaking(true);
+    
     synth.speak(utterance);
   };
 
   const stop = () => { synth.cancel(); setIsSpeaking(false); };
-  return { speak, stop, isSpeaking };
+  
+  return { speak, stop, isSpeaking, voices, selectedVoice, setSelectedVoice };
 };
 
 // --- Components ---
 
 const ThemeSelector = ({ currentTheme, setTheme }) => (
   <div className="flex gap-2 overflow-x-auto pb-2 mb-2 no-scrollbar">
-    {Object.values(THEMES).map((t) => (
-      <button
-        key={t.id}
-        onClick={() => setTheme(t.id)}
-        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all border ${
-          currentTheme === t.id ? 'border-transparent shadow-md transform scale-105 ring-2 ring-offset-1 ring-indigo-300' : 'border-gray-200 opacity-70'
-        }`}
-        style={{ backgroundColor: t.id === 'default' ? '#fff' : t.bg === 'bg-slate-900' ? '#1e293b' : t.primary, color: t.id === 'default' ? '#000' : '#fff' }}
-      >
-        {t.name}
-      </button>
-    ))}
+    {Object.values(THEMES).map((t) => {
+      const isDefault = t.id === 'default';
+      const btnBg = isDefault ? 'bg-white' : t.primary;
+      const btnText = isDefault ? 'text-gray-900' : 'text-white';
+      const btnBorder = isDefault ? 'border-gray-200' : 'border-transparent';
+
+      return (
+        <button
+          key={t.id}
+          onClick={() => setTheme(t.id)}
+          className={`
+            flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border
+            ${btnBg} ${btnText} ${btnBorder}
+            ${currentTheme === t.id 
+              ? 'ring-2 ring-offset-2 ring-indigo-300 shadow-md transform scale-105' 
+              : 'opacity-70 hover:opacity-100 shadow-sm'}
+          `}
+        >
+          {t.name}
+        </button>
+      );
+    })}
   </div>
 );
 
@@ -118,7 +285,7 @@ const NavButton = ({ icon: Icon, label, active, onClick, theme }) => (
 
 // --- Modules ---
 
-// 1. Home Dashboard with Story Generator
+// 1. Home Dashboard
 const HomeDashboard = ({ theme, setActiveTab, onGenerateStory }) => {
   const t = THEMES[theme];
   const [prompt, setPrompt] = useState('');
@@ -127,11 +294,12 @@ const HomeDashboard = ({ theme, setActiveTab, onGenerateStory }) => {
   const handleGenerateClick = () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
+    // Simulate thinking time
     setTimeout(() => {
-      onGenerateStory(prompt); // Call parent function to create story
+      onGenerateStory(prompt); 
       setIsGenerating(false);
       setPrompt('');
-    }, 2000);
+    }, 2500);
   };
 
   return (
@@ -141,14 +309,15 @@ const HomeDashboard = ({ theme, setActiveTab, onGenerateStory }) => {
         <div className={`w-12 h-12 ${t.primaryLight} rounded-full flex items-center justify-center`}><User className={t.accent} size={24} /></div>
       </header>
 
-      {/* Story Generator Widget */}
       <div className={`${t.card} p-5 rounded-3xl shadow-lg border border-gray-100 relative overflow-hidden`}>
         <div className={`absolute top-0 left-0 w-full h-1 ${t.primary}`}></div>
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className={`w-5 h-5 ${t.accent}`} />
           <h3 className={`font-bold ${t.text}`}>مؤلف القصص السحري ✨</h3>
         </div>
-        <p className={`text-xs mb-4 opacity-70 ${t.text}`}>اكتب كلمات بسيطة (مثل: "بطريق يطير"، "سيارة حمراء") وسأؤلف لك قصة فوراً!</p>
+        <p className={`text-xs mb-4 opacity-70 ${t.text}`}>
+          اكتب أي كلمة (مثال: "صاروخ"، "أسد"، "كنز"، "مدرسة") وسأؤلف لك قصة كاملة عنها!
+        </p>
         
         <div className="flex gap-2">
           <input 
@@ -188,19 +357,20 @@ const HomeDashboard = ({ theme, setActiveTab, onGenerateStory }) => {
   );
 };
 
-// 2. Stories Module (Library + Player)
+// 2. Stories Module
 const StoriesModule = ({ theme, initialStory }) => {
   const t = THEMES[theme];
   const [view, setView] = useState(initialStory ? 'player' : 'library');
   const [activeStory, setActiveStory] = useState(initialStory || null);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
-  const { speak, stop, isSpeaking } = useTTS();
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
+  const { speak, stop, isSpeaking, voices, selectedVoice, setSelectedVoice } = useTTS();
 
   useEffect(() => {
     if (initialStory) {
       setActiveStory(initialStory);
       setView('player');
-      setCurrentSceneIndex(0); // Reset for new generated story
+      setCurrentSceneIndex(0); 
     }
   }, [initialStory]);
 
@@ -228,7 +398,59 @@ const StoriesModule = ({ theme, initialStory }) => {
     else handleScenePlay(currentSceneIndex);
   };
 
-  // -- Library View --
+  // Voice Selection Modal
+  const VoiceSettingsModal = () => (
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className={`${t.card} w-full max-w-sm rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300`}>
+        <div className="flex justify-between items-center mb-4">
+            <h3 className={`font-bold text-lg ${t.text} flex items-center gap-2`}>
+                <Mic2 size={20} className={t.accent} />
+                اختر صوت الراوي
+            </h3>
+            <button onClick={() => setShowVoiceSettings(false)} className="text-gray-400 hover:text-red-500">✕</button>
+        </div>
+        
+        <p className="text-xs text-gray-500 mb-2">الأصوات العربية المتوفرة:</p>
+        <div className="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+            {voices.length === 0 && (
+              <div className="text-center py-6 px-2 bg-red-50 rounded-xl border border-red-100">
+                <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-2" />
+                <p className="text-sm font-bold text-red-600 mb-1">لا توجد أصوات عربية!</p>
+                <p className="text-xs text-red-500 leading-relaxed">
+                  جهازك لا يحتوي على حزمة اللغة العربية. يرجى الذهاب لإعدادات جهازك وتثبيت "اللغة العربية" ليتمكن التطبيق من القراءة بشكل صحيح.
+                </p>
+              </div>
+            )}
+            
+            {voices.map((voice, idx) => (
+              <button
+                  key={idx}
+                  onClick={() => { setSelectedVoice(voice); setShowVoiceSettings(false); }}
+                  className={`w-full text-right p-3 rounded-xl text-sm font-medium flex justify-between items-center transition-colors 
+                    ${selectedVoice?.name === voice.name 
+                      ? `${t.primaryLight} ${t.accent} border border-indigo-200 ring-1 ring-indigo-200` 
+                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}
+                  `}
+              >
+                  <div className="flex flex-col items-start">
+                    <span className="truncate max-w-[200px] font-bold">
+                      {voice.name.replace('Google', '').replace('Microsoft', '').replace('Arabic', '').replace('Direct', '')}
+                    </span>
+                    <span className="text-[10px] opacity-60 flex items-center gap-1">
+                      {voice.name.includes('Google') ? 'Google' : voice.name.includes('Microsoft') ? 'Microsoft' : 'System'} 
+                      • {voice.lang}
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full flex gap-1 items-center shadow-sm">
+                    <Globe size={10}/> عربي
+                  </span>
+              </button>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
+
   if (view === 'library') {
     return (
       <div className="p-6 h-full flex flex-col pb-24 overflow-y-auto">
@@ -237,13 +459,11 @@ const StoriesModule = ({ theme, initialStory }) => {
           <p className={`opacity-60 text-sm ${t.text}`}>استمتع بأكثر من 20 قصة متنوعة</p>
         </header>
 
-        {/* Search Bar Mock */}
         <div className={`flex items-center gap-2 ${t.card} p-3 rounded-xl mb-6 shadow-sm border border-gray-100`}>
           <Search size={20} className="text-gray-400" />
           <input type="text" placeholder="ابحث عن قصة..." className="bg-transparent text-sm w-full outline-none text-gray-700" />
         </div>
 
-        {/* Stories Grid */}
         <div className="grid grid-cols-2 gap-4">
           {STORY_LIBRARY.map((story) => (
             <div 
@@ -269,20 +489,27 @@ const StoriesModule = ({ theme, initialStory }) => {
     );
   }
 
-  // -- Player View --
   const currentScene = activeStory?.scenes[currentSceneIndex];
   return (
-    <div className={`h-full flex flex-col ${t.bg} pb-24`}>
+    <div className={`h-full flex flex-col ${t.bg} pb-24 relative`}>
+      {showVoiceSettings && <VoiceSettingsModal />}
+      
       <div className={`h-1/2 rounded-b-[40px] relative overflow-hidden flex flex-col justify-between shadow-xl p-6 transition-colors duration-500 ${t.primary}`}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         
-        {/* Top Bar */}
         <div className="relative z-10 flex justify-between items-center text-white">
           <button onClick={() => { stop(); setView('library'); }} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/30 transition-colors"><ArrowLeft size={20} /></button>
-          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur-md">جاري التشغيل</span>
+          
+          <button 
+            onClick={() => setShowVoiceSettings(true)}
+            className="flex items-center gap-2 bg-black/20 hover:bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium transition-colors border border-white/10"
+          >
+            <Mic2 size={12} />
+            <span className="max-w-[80px] truncate">{selectedVoice ? selectedVoice.name.replace('Google', '').replace('Microsoft', '') : 'تحميل الأصوات...'}</span>
+            <ChevronDown size={12} />
+          </button>
         </div>
 
-        {/* Title Area */}
         <div className="relative z-10 text-center text-white mb-8">
           <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md mb-3 inline-block shadow-sm">
              {currentScene?.speaker}
@@ -384,19 +611,11 @@ export default function App() {
   const [generatedStory, setGeneratedStory] = useState(null);
   const t = THEMES[themeId];
 
-  // Callback to handle story generation from Home
+  // Callback to handle story generation using the New Engine
   const handleGenerateStory = (prompt) => {
-    const newStory = {
-      id: Date.now(),
-      title: `قصة: ${prompt}`,
-      genre: 'fantasy',
-      brief: "قصة جديدة تم تأليفها خصيصاً لك!",
-      scenes: [
-        { speaker: "الراوي", text: `هذه حكاية فريدة عن ${prompt}.` },
-        { speaker: "البطل", text: "أنا متحمس جداً لبدء هذه المغامرة!" },
-        { speaker: "الراوي", text: "وبدأت الأحداث تتوالى بشكل عجيب..." }
-      ]
-    };
+    // Call the advanced logic engine
+    const newStory = generateStoryLogic(prompt);
+    
     // Add to library
     STORY_LIBRARY.unshift(newStory); 
     setGeneratedStory(newStory);
